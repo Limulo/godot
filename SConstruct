@@ -153,6 +153,9 @@ opts.Add('builtin_freetype', "Use the builtin freetype library (yes/no)", 'yes')
 opts.Add('builtin_glew', "Use the builtin glew library (yes/no)", 'yes')
 opts.Add('builtin_libmpcdec', "Use the builtin libmpcdec library (yes/no)", 'yes')
 opts.Add('builtin_libogg', "Use the builtin libogg library (yes/no)", 'yes')
+# MIA AGGIUNTA!!!
+opts.Add('builtin_libpd', "Use the builtin libpd library (yes/no)", 'yes')
+
 opts.Add('builtin_libpng', "Use the builtin libpng library (yes/no)", 'yes')
 opts.Add('builtin_libtheora', "Use the builtin libtheora library (yes/no)", 'yes')
 opts.Add('builtin_libvorbis', "Use the builtin libvorbis library (yes/no)", 'yes')
@@ -165,6 +168,7 @@ opts.Add('builtin_opus', "Use the builtin opus library (yes/no)", 'yes')
 opts.Add('builtin_speex', "Use the builtin speex library (yes/no)", 'yes')
 opts.Add('builtin_squish', "Use the builtin squish library (yes/no)", 'yes')
 opts.Add('builtin_zlib', "Use the builtin zlib library (yes/no)", 'yes')
+
 
 # Environment setup
 opts.Add("CXX", "C++ compiler")
@@ -461,8 +465,7 @@ screen = sys.stdout
 node_count = 0
 node_count_max = 0
 node_count_interval = 1
-if ('env' in locals()):
-    node_count_fname = str(env.Dir('#')) + '/.scons_node_count'
+node_count_fname = str(env.Dir('#')) + '/.scons_node_count'
 
 def progress_function(node):
     global node_count, node_count_max, node_count_interval, node_count_fname
@@ -482,7 +485,7 @@ def progress_finish(target, source, env):
     with open(node_count_fname, 'w') as f:
         f.write('%d\n' % node_count)
 
-if ('env' in locals() and env["progress"] == "yes"):
+if (env["progress"] == "yes"):
     try:
         with open(node_count_fname) as f:
             node_count_max = int(f.readline())
@@ -491,5 +494,3 @@ if ('env' in locals() and env["progress"] == "yes"):
     Progress(progress_function, interval = node_count_interval)
     progress_finish_command = Command('progress_finish', [], progress_finish)
     AlwaysBuild(progress_finish_command)
-
-
