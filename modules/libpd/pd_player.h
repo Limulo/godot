@@ -54,6 +54,9 @@ public:
 		float get_volume_db() const;
 		bool load_patch(const String &patch, const String &folder);
 		void unload_patch();
+		void pd_bang(const String &dst);
+		void pd_float(const String &dst, float val);
+		void pd_symbol(const String &dst, const String &symbol);
 		PDPlayer();
 		~PDPlayer();
 };

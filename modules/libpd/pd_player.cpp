@@ -53,7 +53,7 @@ void PDPlayer::sp_update() {
 }
 
 bool PDPlayer::InternalStream::mix(int32_t *p_buffer, int p_frames) {
-	printf("mix()\n");
+	//printf("mix()\n");
 	return player->sp_mix(p_buffer, p_frames);
 }
 
@@ -62,7 +62,7 @@ bool PDPlayer::sp_mix(int32_t *p_buffer, int p_frames) {
 	// size of buffers: # of channels * # of ticks * # of samples per tick (blocksize).
   int todo_ticks = p_frames / block_size;
 	int outbuf_size = output_channels * block_size * todo_ticks;
-	printf( "sp_mix() - %d; output_size: %d\n", p_frames, outbuf_size );
+	//printf( "sp_mix() - %d; output_size: %d\n", p_frames, outbuf_size );
 
 	//int r = libpd_process_float( todo_ticks, inbuf, p_buffer );
   int r = libpd_process_float( todo_ticks, inbuf, outbuf );
@@ -85,7 +85,7 @@ bool PDPlayer::sp_mix(int32_t *p_buffer, int p_frames) {
 
 // this method is called from GDScripts
 void PDPlayer::play() {
-	printf("\tplay()\n");
+	//printf("\tplay()\n");
 	ERR_FAIL_COND( !is_inside_tree() );
 
 	if ( is_playing() )
@@ -117,7 +117,7 @@ void PDPlayer::play() {
 }
 
 void PDPlayer::stop() {
-	printf("\tstop()\n");
+	//printf("\tstop()\n");
 	if ( !is_inside_tree() )
 		return;
 	if ( !is_playing() )
@@ -167,6 +167,38 @@ float PDPlayer::get_volume_db() const {
 		return Math::linear2db(volume);
 }
 
+/* ******************************************************************* */
+
+void PDPlayer::pd_bang(const String &d){
+	int l = d.length();
+	char dst[l+1];
+	GDString2char(d, dst, l);
+	libpd_bang(dst);
+}
+
+void PDPlayer::pd_float(const String &d, float val){
+	int l = d.length();
+	char dst[l+1];
+	GDString2char(d, dst, l);
+	libpd_float(dst, val);
+}
+
+void PDPlayer::pd_symbol(const String &d, const String &s){
+	int l = d.length();
+	char dst[l+1];
+	GDString2char(d, dst, l);
+	l = s.length();
+	char symbol[l+1];
+	GDString2char(s, symbol, l);
+	libpd_symbol(dst, symbol);
+}
+
+//DEFINE T_LIBPD_BANGHOOK LIBPD_BANGHOOK somewhere
+/*void PDPlayer::subscribe(const String &pd_sender,(*t_libpd_banghook)(const char *source)){
+	libpd_set_banghook(t_libpd_banghook)
+	libpd_bind(pd_sender);
+}*/
+
 void PDPlayer::_bind_methods() {
 
 	ObjectTypeDB::bind_method(_MD("play"), &PDPlayer::play);
@@ -183,21 +215,28 @@ void PDPlayer::_bind_methods() {
 	ObjectTypeDB::bind_method(_MD("set_volume_db", "db"), &PDPlayer::set_volume_db);
 	ObjectTypeDB::bind_method(_MD("get_volume_db"), &PDPlayer::get_volume_db);
 
-	ADD_PROPERTY(PropertyInfo(Variant::REAL, "stream/volume_db", PROPERTY_HINT_RANGE, "-80,24,0.01"), _SCS("set_volume_db"), _SCS("get_volume_db"));
+	ObjectTypeDB::bind_method(_MD("pd_bang", "dst"), &PDPlayer::pd_bang);
+	ObjectTypeDB::bind_method(_MD("pd_float", "dst", "val"), &PDPlayer::pd_float);
+	ObjectTypeDB::bind_method(_MD("pd_symbol", "dst", "symbol"), &PDPlayer::pd_symbol);
+
+	//ADD_PROPERTY(PropertyInfo(Variant::REAL, "stream/volume_db", PROPERTY_HINT_RANGE, "-80,24,0.01"), _SCS("set_volume_db"), _SCS("get_volume_db"));
 }
 
 /* ******************************************************************* */
 void PDPlayer::GDString2char(const String &in, char *c, int l) {
 	/* string conversion stuff **********/
 	char mbs[l+1];
+	for (int i=0; i <=l; i++){
+			mbs[i]='\0';
+	}
 	int r = std::wcstombs( mbs, in.c_str(), l );
-	printf( "r: %d\t; mbs: %s\n", r, mbs );
+	int len=l+1;
+	//printf("\nin_bytes = %d\nin_buffer = %d\n%s\n", l, len, mbs);
 	for(int i=0; i <= l; i++)
   	c[i] = mbs[i];
 }
 
-
-bool PDPlayer::load_patch(const String &patch, const String &folder){
+bool PDPlayer::load_patch(const String &patch, const String &folder) {
 	libpd_init();
 	if (libpd_init_audio( input_channels, output_channels, server_mix_rate ) )
 		printf("LIBPD error: couldn't init audio\n");
@@ -207,15 +246,24 @@ bool PDPlayer::load_patch(const String &patch, const String &folder){
 	}
 	block_size = (int32_t)libpd_blocksize(); // default 64
 
-	/* TODO: find a useful way to load patch via GDScripts */
+	// find a useful way to load patch via GDScripts
 	int l = patch.length();
 	char p[l+1];
+	/*for(int i=0; i <=l; i++){
+		p[i]='\0';
+	}*/
 	GDString2char(patch, p, l);
+	//printf( "char string: %s\n", p );
+
 	l = folder.length();
 	char f[l+1];
+	/*for(int i=0; i <=l; i++){
+		f[i]='\0';
+	}*/
 	GDString2char(folder,f, l);
+	//printf( "char string: %s\n", f );
 
-	patch_handle = libpd_openfile( 	p, f );
+	patch_handle = libpd_openfile(p,f);
 	if(patch_handle==NULL)
 	{
 		print_line("LIBPD error: couldn't open patch file.\n");
