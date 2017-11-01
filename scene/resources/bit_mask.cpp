@@ -31,6 +31,7 @@
 #include "io/image_loader.h"
 
 void BitMap::create(const Size2 &p_size) {
+	print_line("DEBUG => BitMap::create");
 
 	ERR_FAIL_COND(p_size.width < 1);
 	ERR_FAIL_COND(p_size.height < 1);
@@ -42,6 +43,7 @@ void BitMap::create(const Size2 &p_size) {
 }
 
 void BitMap::create_from_image_alpha(const Image &p_image) {
+	print_line("DEBUG => BitMap::create_from_image_alpha");
 
 	ERR_FAIL_COND(p_image.empty());
 	Image img = p_image;
@@ -63,6 +65,7 @@ void BitMap::create_from_image_alpha(const Image &p_image) {
 }
 
 void BitMap::set_bit_rect(const Rect2 &p_rect, bool p_value) {
+	print_line("DEBUG => BitMap::set_bit_rect");
 
 	Rect2i current = Rect2i(0, 0, width, height).clip(p_rect);
 	uint8_t *data = bitmask.ptr();
@@ -88,6 +91,7 @@ void BitMap::set_bit_rect(const Rect2 &p_rect, bool p_value) {
 }
 
 int BitMap::get_true_bit_count() const {
+	print_line("DEBUG => BitMap::get_true_bit_count");
 
 	int ds = bitmask.size();
 	const uint8_t *d = bitmask.ptr();
@@ -110,6 +114,7 @@ int BitMap::get_true_bit_count() const {
 }
 
 void BitMap::set_bit(const Point2 &p_pos, bool p_value) {
+	print_line("DEBUG => BitMap::set_bit");
 
 	int x = Math::fast_ftoi(p_pos.x);
 	int y = Math::fast_ftoi(p_pos.y);
@@ -132,6 +137,7 @@ void BitMap::set_bit(const Point2 &p_pos, bool p_value) {
 }
 
 bool BitMap::get_bit(const Point2 &p_pos) const {
+	//print_line("DEBUG => BitMap::get_bit");
 
 	int x = Math::fast_ftoi(p_pos.x);
 	int y = Math::fast_ftoi(p_pos.y);
@@ -146,11 +152,13 @@ bool BitMap::get_bit(const Point2 &p_pos) const {
 }
 
 Size2 BitMap::get_size() const {
+	//print_line("DEBUG => BitMap::get_size");
 
 	return Size2(width, height);
 }
 
 void BitMap::_set_data(const Dictionary &p_d) {
+	print_line("DEBUG => BitMap::_set_data");
 
 	ERR_FAIL_COND(!p_d.has("size"));
 	ERR_FAIL_COND(!p_d.has("data"));
@@ -160,6 +168,7 @@ void BitMap::_set_data(const Dictionary &p_d) {
 }
 
 Dictionary BitMap::_get_data() const {
+	print_line("DEBUG => BitMap::_get_data");
 
 	Dictionary d;
 	d["size"] = get_size();
@@ -168,6 +177,7 @@ Dictionary BitMap::_get_data() const {
 }
 
 void BitMap::_bind_methods() {
+	print_line("DEBUG => BitMap->_bind_methods");
 
 	ObjectTypeDB::bind_method(_MD("create", "size"), &BitMap::create);
 	ObjectTypeDB::bind_method(_MD("create_from_image_alpha", "image"), &BitMap::create_from_image_alpha);
@@ -187,6 +197,7 @@ void BitMap::_bind_methods() {
 }
 
 BitMap::BitMap() {
+	print_line("DEBUG => BitMap constructor");
 
 	width = 0;
 	height = 0;

@@ -1,47 +1,62 @@
 ## How does Import Plugin works? 
 
-### A debug test on EditorBitMaskImportPlugin
+### A debug test on BitMap resource file
 
-As soon as the editor starts:
+As soon as Godot is launched:
+
+	DEBUG => BitMap->_bind_methods
+
+(we're still in the project list window)
+
+Once the project we want to open is selected, and the `edit` command is executed:
 
 	DEBUG => EditorBitMaskImportPlugin constructor 1
 	DEBUG => EditorBitMaskImportDialog constructor
+	DEBUG => EditorBitMaskImportDialog->_bind_methods
 	DEBUG => EditorBitMaskImportPlugin::get_name
 	DEBUG => EditorBitMaskImportPlugin::get_name
 	DEBUG => EditorBitMaskImportPlugin::get_visible_name
 
-When we select the `BitMask` option in the `Import` menu:
 
-	DEBUG => EditorBitMaskImportPlugin::import_dialog
+
+A popup window appears
+
 	DEBUG => EditorBitMaskImportDialog->popup_import
 
-When we have to select the file to import:
+We can brwose the FS and choose the file to import
 
-	DEBUG => EditorBitMaskImportDialog->_browse 
+	DEBUG => EditorBitMaskImportDialog->_browse
 
-We can then browse in our filesystem inside a dedicated window. 
-As soon as we select the file we want to import:
+Once the file has been chose:
 
 	DEBUG => EditorBitMaskImportDialog->_choose_files
 
-Then we're asked to choose a target location for the imported resource
+We have to select a target path
 
 	DEBUG => EditorBitMaskImportDialog->_browse_target
 
-again we're offered a browser view.
-Once selected the destination folder:
+and when we choose it
 
 	DEBUG => EditorBitMaskImportDialog->_choose_save_dir
 
-Eventually, when clicking on the `Import` button:
+Then
 
 	DEBUG => EditorBitMaskImportDialog->_import
 	DEBUG => EditorBitMaskImportPlugin::import
+
+	DEBUG => BitMap constructor
+	DEBUG => BitMap::create_from_image_alpha
+	DEBUG => BitMap::create
+
 	DEBUG => EditorBitMaskImportPlugin::get_name
+	
+	DEBUG => BitMap::_get_data
+	DEBUG => BitMap::_get_data
+
 	SAVING: res://perrybara.pbm
 	SAVE PATH: ../../../Immagini/screenshots/perrybara.png
 	SAVE MD5: df4b8dc894988bcc009bf941a8bdec1c
 
-The last three lines are output from functions in the `core/io/resource_format_binary.cpp` file.
+
 
 

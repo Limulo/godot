@@ -151,6 +151,7 @@ public:
 	}
 
 	static void _bind_methods() {
+		print_line("DEBUG => EditorBitMaskImportDialog->_bind_methods");
 
 		ObjectTypeDB::bind_method("_choose_files", &EditorBitMaskImportDialog::_choose_files);
 		ObjectTypeDB::bind_method("_choose_save_dir", &EditorBitMaskImportDialog::_choose_save_dir);
