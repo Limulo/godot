@@ -24,8 +24,7 @@ public:
 		return false;
 	}
 
-	void _get_property_list(List<PropertyInfo> *p_list) const {
-	}
+	void _get_property_list(List<PropertyInfo> *p_list) const {}
 
 	static void _bind_methods() {
 
@@ -51,6 +50,7 @@ class EditorBitMaskImportDialog : public ConfirmationDialog {
 
 public:
 	void _choose_files(const Vector<String> &p_path) {
+		print_line("DEBUG => EditorBitMaskImportDialog->_choose_files");
 
 		String files;
 		for (int i = 0; i < p_path.size(); i++) {
@@ -63,21 +63,23 @@ public:
 		import_path->set_text(files);
 	}
 	void _choose_save_dir(const String &p_path) {
+		print_line("DEBUG => EditorBitMaskImportDialog->_choose_save_dir");
 
 		save_path->set_text(p_path);
 	}
 
 	void _browse() {
-
+		print_line("DEBUG => EditorBitMaskImportDialog->_browse");
 		file_select->popup_centered_ratio();
 	}
 
 	void _browse_target() {
-
+		print_line("DEBUG => EditorBitMaskImportDialog->_browse_target");
 		save_select->popup_centered_ratio();
 	}
 
 	void popup_import(const String &p_path) {
+		print_line("DEBUG => EditorBitMaskImportDialog->popup_import");
 
 		popup_centered(Size2(400, 100) * EDSCALE);
 		if (p_path != "") {
@@ -98,6 +100,7 @@ public:
 	}
 
 	void _import() {
+		print_line("DEBUG => EditorBitMaskImportDialog->_import");
 
 		Vector<String> bitmasks = import_path->get_text().split(",");
 
@@ -158,6 +161,7 @@ public:
 	}
 
 	EditorBitMaskImportDialog(EditorBitMaskImportPlugin *p_plugin) {
+		print_line("DEBUG => EditorBitMaskImportDialog constructor");
 
 		plugin = p_plugin;
 
@@ -225,22 +229,24 @@ public:
 	}
 
 	~EditorBitMaskImportDialog() {
-	}
+		print_line("DEBUG => EditorBitMaskImportDialog destructor");}
 };
 
 String EditorBitMaskImportPlugin::get_name() const {
-
+	print_line("DEBUG => EditorBitMaskImportPlugin::get_name");
 	return "bitmask";
 }
 String EditorBitMaskImportPlugin::get_visible_name() const {
+	print_line("DEBUG => EditorBitMaskImportPlugin::get_visible_name");
 
 	return TTR("Bit Mask");
 }
 void EditorBitMaskImportPlugin::import_dialog(const String &p_from) {
-
+	print_line("DEBUG => EditorBitMaskImportPlugin::import_dialog");
 	dialog->popup_import(p_from);
 }
 Error EditorBitMaskImportPlugin::import(const String &p_path, const Ref<ResourceImportMetadata> &p_from) {
+	print_line("DEBUG => EditorBitMaskImportPlugin::import");
 
 	ERR_FAIL_COND_V(p_from->get_source_count() != 1, ERR_INVALID_PARAMETER);
 
@@ -265,6 +271,7 @@ Error EditorBitMaskImportPlugin::import(const String &p_path, const Ref<Resource
 EditorBitMaskImportPlugin *EditorBitMaskImportPlugin::singleton = NULL;
 
 void EditorBitMaskImportPlugin::import_from_drop(const Vector<String> &p_drop, const String &p_dest_path) {
+	print_line("DEBUG => EditorBitMaskImportPlugin::import_from_drop");
 
 	Vector<String> files;
 
@@ -291,6 +298,7 @@ void EditorBitMaskImportPlugin::import_from_drop(const Vector<String> &p_drop, c
 }
 
 void EditorBitMaskImportPlugin::reimport_multiple_files(const Vector<String> &p_list) {
+	print_line("DEBUG => EditorBitMaskImportPlugin::reimport_multiple_files");
 
 	if (p_list.size() == 0)
 		return;
@@ -318,11 +326,13 @@ void EditorBitMaskImportPlugin::reimport_multiple_files(const Vector<String> &p_
 }
 
 bool EditorBitMaskImportPlugin::can_reimport_multiple_files() const {
+	print_line("DEBUG => EditorBitMaskImportPlugin::can_reimport_multiple_files");
 
 	return true;
 }
 
 EditorBitMaskImportPlugin::EditorBitMaskImportPlugin(EditorNode *p_editor) {
+	print_line("DEBUG => EditorBitMaskImportPlugin constructor 1");
 
 	singleton = this;
 	dialog = memnew(EditorBitMaskImportDialog(this));
@@ -330,4 +340,6 @@ EditorBitMaskImportPlugin::EditorBitMaskImportPlugin(EditorNode *p_editor) {
 }
 
 EditorBitMaskExportPlugin::EditorBitMaskExportPlugin() {
+	print_line("DEBUG => EditorBitMaskImportPlugin constructor 2");
+
 }
